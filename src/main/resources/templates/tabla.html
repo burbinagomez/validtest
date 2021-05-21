@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head> 
+    <title>Getting Started: Serving Web Content</title> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+</head>
+<body class="container">
+	<table class="table" id="table_id">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Name</th>
+      <th scope="col">Lastname</th>
+      <th scope="col">Procesado</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+  </tbody>
+</table>
+<button id="procesar" class="btn btn-primary">Procesar</button>
+<a href="/" class="btn btn-primary">Volver</a>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+<script type="text/javascript">
+$(document).ready( function () {
+    var table = $('#table_id').DataTable({
+    	ajax: {
+    		url: '/get',
+    		method: 'GET',
+    		dataSrc: ''
+    	},
+    	columns:[
+    		{data:'id'},
+    		{data:'name'},
+    		{data:'lastname'},
+    		{data:'procesado'},
+    	]
+    });
+    $('#table_id tbody').on( 'click', 'tr', function () {
+        $(this).toggleClass('selected');
+    } );
+    $('#procesar').click( function () {
+    	console.log(table.rows('.selected').data())
+    	var data = []
+    	for(var i=0;i<table.rows('.selected').data().length;i++){
+    		data.push(table.row(table.rows('.selected').data()[i].id-1).data())
+    	}
+    	console.log(data)
+    	$.ajax({
+    		contentType: "application/json",
+    		method: "PUT",
+    		url: "/edit",
+    		data: JSON.stringify(data)
+    	}).done(function( msg ) {
+    		location.reload()
+    	  });
+    } );
+} );
+
+</script>
+</body>
+</html>
